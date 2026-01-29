@@ -11,3 +11,11 @@ public class ApiApplication {
 	}
 
 }
+
+
+/*
+TODO: Proteger informações do usuario (Email, veiculo cadastrado, senha, id);
+ Bloquear possibilidade de invasores terem acesso a informações que não são deles;
+ Proteger endpoints;
+ evitar que invasor consiga fazer alterações indevidas.
+ */

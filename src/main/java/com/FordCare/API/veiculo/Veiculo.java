@@ -3,11 +3,15 @@ package com.FordCare.API.veiculo;
 import com.FordCare.API.model.RegistroManutencao;
 import com.FordCare.API.usuario.Usuario;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "veiculos")
 public class Veiculo {
@@ -19,11 +23,16 @@ public class Veiculo {
     private String marca;
     private String modelo;
     private Integer anoVeiculo;
+
+    @NotNull
+    @Column(unique = true)
     private String placa;
+
     private String tipoCombustivel;
     private Integer km;
 
-    @ManyToOne
+    //@ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 

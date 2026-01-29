@@ -21,8 +21,8 @@ public class VeiculoDTO {
     private List<String> alertaPainel;
     private String tipoUso;
     private Integer kmMedio;
-    private Integer saudeVeiculo;
-    private String imageVeiculo;
+    //private Integer saudeVeiculo;
+    private String imagemVeiculo;
 
     private Long usuarioId;
 }

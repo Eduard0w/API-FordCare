@@ -6,6 +6,7 @@ import com.FordCare.API.usuario.Usuario;
 import com.FordCare.API.usuario.UsuarioRepository;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoDTO;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class VeiculoService {
 
     @Autowired
@@ -47,8 +49,7 @@ public class VeiculoService {
         veiculo.setAlertaPainel(dados.getAlertaPainel());
         veiculo.setTipoUso(dados.getTipoUso());
         veiculo.setKmMedio(dados.getKmMedio());
-        veiculo.setSaudeVeiculo(dados.getSaudeVeiculo());
-        veiculo.setImagemVeiculo(dados.getImageVeiculo());
+        veiculo.setImagemVeiculo(dados.getImagemVeiculo());
 
         //Associa o veiculo ao dono
         veiculo.setUsuario(dono);
@@ -120,14 +121,14 @@ public class VeiculoService {
 
     public Integer pegarSaudeVeiculo(Long id) {
         Veiculo veiculo = veiculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado"));
 
         // Retorna a saúde calculada (ou 0 se for nula)
         return veiculo.getSaudeVeiculo() != null ? veiculo.getSaudeVeiculo() : 0;
     }
 
 
-    public int calcularPerdaManutencao(RegistroManutencao registro, Integer kmAtual, LocalDate dataAtual){
+    private int calcularPerdaManutencao(RegistroManutencao registro, Integer kmAtual, LocalDate dataAtual){
         if(registro == null) return 50; //Se nunca trocou, penalidade maxima...
 
         long dias = ChronoUnit.DAYS.between(registro.getData(), dataAtual);
@@ -147,7 +148,7 @@ public class VeiculoService {
         return Math.max(perdaData, perdaKm);
     }
 
-    public int calcularPerdaPorAlertas(@NotNull List<String> alertas) {
+    private int calcularPerdaPorAlertas(@NotNull List<String> alertas) {
         if(alertas.isEmpty()) return 0;
 
         int perdaTotal = 0;

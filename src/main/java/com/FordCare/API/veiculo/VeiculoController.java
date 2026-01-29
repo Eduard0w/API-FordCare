@@ -30,7 +30,7 @@ public class VeiculoController {
 
         URI uri = uriBuilder.path("/veiculo/{id}").buildAndExpand(novoVeiculo.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(novoVeiculo);
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping("/alterar/{id}")
@@ -39,9 +39,15 @@ public class VeiculoController {
         return ResponseEntity.ok().body(veiculoAlterado);
     }
 
+//    @DeleteMapping("/deletar/{id}")
+//    public void deletarVeiculo(@PathVariable Long id){
+//        service.excluirVeiculo(id);
+//    }
+
     @DeleteMapping("/deletar/{id}")
-    public void deletarVeiculo(@PathVariable Long id){
+    public ResponseEntity deletarVeiculo(@PathVariable Long id){
         service.excluirVeiculo(id);
+        return ResponseEntity.noContent().build();
     }
 
     //Traz todos os veículos do usuario
