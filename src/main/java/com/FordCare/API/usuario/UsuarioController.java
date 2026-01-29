@@ -60,11 +60,9 @@ public class UsuarioController {
 
     @PostMapping("/registrar")
     public ResponseEntity criarUsuario(@RequestBody @NotNull @Valid UsuarioDTO usuario, @NotNull UriComponentsBuilder uriBuilder){
-        if(repository.findByEmail(usuario.getEmail()) != null) return ResponseEntity.badRequest().build();
+        if(repository.existsByEmail(usuario.getEmail())) return ResponseEntity.badRequest().build();
 
-        String senhaCriptada = new BCryptPasswordEncoder().encode(usuario.getSenha());
-
-        Usuario novoUsuario = service.criarUsuario(usuario.getNome(), usuario.getEmail(), senhaCriptada);
+        Usuario novoUsuario = service.criarUsuario(usuario);
 
         //Para seguir o padrão REST é necessario dizer ao cliente onde esse algo está
         URI uri = uriBuilder.path("/usuario/{id}").buildAndExpand(novoUsuario.getId()).toUri();
