@@ -5,6 +5,7 @@ import com.FordCare.API.model.RegistroManutencao;
 import com.FordCare.API.usuario.Usuario;
 import com.FordCare.API.usuario.UsuarioRepository;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoDTO;
+import com.FordCare.API.veiculo.veiculoDto.VeiculoResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,7 @@ public class VeiculoService {
         return veiculoRepository.save(veiculo);
     }
 
-    public Veiculo alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados){
+    public VeiculoResponseDTO alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados){
         Veiculo veiculo = veiculoRepository.findById(veiculoId)
                 .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado!"));
 
@@ -83,8 +84,9 @@ public class VeiculoService {
         mapper.atualizarVeiculo(novosDados, veiculo);
 
         calcularSaude(veiculo);
+        veiculoRepository.save(veiculo);
 
-        return veiculoRepository.save(veiculo);
+        return mapper.veiculoParaVeiculoResponseDTO(veiculo);
     }
 
     public void excluirVeiculo(Long veiculoId){
@@ -92,7 +94,7 @@ public class VeiculoService {
     }
 
     // Mé7odo para listar veículos de um usuário específico
-    public List<Veiculo> listarPorUsuario(Long usuarioId) {
+    public List<VeiculoResponseDTO> listarPorUsuario(Long usuarioId) {
         return veiculoRepository.findByUsuarioId(usuarioId);
     }
 

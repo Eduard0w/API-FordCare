@@ -19,3 +19,7 @@ TODO: Proteger informações do usuario (Email, veiculo cadastrado, senha, id);
  Proteger endpoints;
  evitar que invasor consiga fazer alterações indevidas.
  */
+
+/*
+* TODO: O usuario só pode ver os veiculos que pertencem a ele
+*  */

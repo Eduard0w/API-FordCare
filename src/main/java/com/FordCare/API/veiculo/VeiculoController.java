@@ -1,6 +1,7 @@
 package com.FordCare.API.veiculo;
 
 import com.FordCare.API.veiculo.veiculoDto.VeiculoDTO;
+import com.FordCare.API.veiculo.veiculoDto.VeiculoResponseDTO;
 import lombok.Data;
 import org.apache.catalina.Service;
 import org.apache.coyote.Response;
@@ -34,15 +35,18 @@ public class VeiculoController {
     }
 
     @PutMapping("/alterar/{id}")
-    public ResponseEntity<Veiculo> modificarVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO novosDados){
-        Veiculo veiculoAlterado = service.alterarInformacao(id, novosDados);
+    public ResponseEntity<@NotNull VeiculoResponseDTO> modificarVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO novosDados){
+        VeiculoResponseDTO veiculoAlterado;
+        veiculoAlterado = service.alterarInformacao(id, novosDados);
         return ResponseEntity.ok().body(veiculoAlterado);
     }
 
-//    @DeleteMapping("/deletar/{id}")
-//    public void deletarVeiculo(@PathVariable Long id){
-//        service.excluirVeiculo(id);
-//    }
+/*
+    @DeleteMapping("/deletar/{id}")
+    public void deletarVeiculo(@PathVariable Long id){
+        service.excluirVeiculo(id);
+    }
+*/
 
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity deletarVeiculo(@PathVariable Long id){
@@ -53,8 +57,9 @@ public class VeiculoController {
     //Traz todos os veículos do usuario
     //Para que o SpringBoot saiba que estamos a pegar o ‘id’ da URL precisamos deixar o mesmo nome do id no parâmetro para que ele não confunda
     @GetMapping("/usuario/{id}")
-    public ResponseEntity<List<Veiculo>> printVeiculo(@PathVariable Long id) {
-        List<Veiculo> veiculosUsuario = service.listarPorUsuario(id);
+    public ResponseEntity<List<VeiculoResponseDTO>> printVeiculo(@PathVariable Long id) {
+        List<VeiculoResponseDTO> veiculosUsuario = service.listarPorUsuario(id);
+
 
         return ResponseEntity.ok(veiculosUsuario);
     }
