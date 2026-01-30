@@ -1,6 +1,5 @@
-package com.FordCare.API.security;
+package com.FordCare.API.infra;
 
-import jakarta.servlet.Filter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

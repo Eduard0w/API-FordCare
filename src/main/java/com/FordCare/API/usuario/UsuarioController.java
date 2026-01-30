@@ -1,22 +1,20 @@
 package com.FordCare.API.usuario;
 
-import com.FordCare.API.security.TokenService;
+import com.FordCare.API.infra.TokenService;
 import com.FordCare.API.usuario.usuarioDto.LoginDTO;
 import com.FordCare.API.usuario.usuarioDto.LoginResponseDTO;
 import com.FordCare.API.usuario.usuarioDto.UsuarioDTO;
+import com.FordCare.API.usuario.usuarioDto.UsuarioResponseDTO;
 import jakarta.validation.Valid;
-import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuario")
@@ -68,6 +66,6 @@ public class UsuarioController {
         URI uri = uriBuilder.path("/usuario/{id}").buildAndExpand(novoUsuario.getId()).toUri();
 
         //retorna 201 se for crido com sucesso
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(new UsuarioResponseDTO(novoUsuario.getId(), novoUsuario.getNome()));
     }
 }

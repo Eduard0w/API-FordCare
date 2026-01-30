@@ -1,4 +1,4 @@
-package com.FordCare.API.security;
+package com.FordCare.API.infra;
 
 import com.FordCare.API.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
