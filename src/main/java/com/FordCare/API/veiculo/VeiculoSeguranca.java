@@ -2,9 +2,11 @@ package com.FordCare.API.veiculo;
 
 import com.FordCare.API.usuario.Usuario;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
 
+@Component
 public class VeiculoSeguranca {
 
     boolean validarUsuario(Veiculo veiculo) throws AccessDeniedException {

@@ -47,14 +47,14 @@ public class VeiculoServiceTest {
         dto.setKm(10000);
         RegistroManutencao oleo = new RegistroManutencao();
         oleo.setData(LocalDate.of(2025, 4, 10));
-        oleo.setKM_manutencao(100);
+        oleo.setKm(100);
         dto.setUltTrocaOleo(oleo);
         RegistroManutencao filtro = new RegistroManutencao();
         filtro.setData(LocalDate.of(2025, 02, 10));
-        filtro.setKM_manutencao(2000);
+        filtro.setKm(2000);
         RegistroManutencao pastilhas = new RegistroManutencao();
         pastilhas.setData(LocalDate.of(2025, 02, 10));
-        pastilhas.setKM_manutencao(2000);
+        pastilhas.setKm(2000);
 
         // Ensinamos os Mocks a se comportarem
         // Quando buscar o dono pelo ID, retorna o usuarioMock que criamos
