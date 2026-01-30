@@ -1,5 +1,6 @@
 package com.FordCare.API.veiculo;
 
+import com.FordCare.API.usuario.Usuario;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoDTO;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoResponseDTO;
 import lombok.Data;
@@ -8,10 +9,12 @@ import org.apache.coyote.Response;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 // API de exemplo: https://github.com/RameshMF/springboot-blog-rest-api/blob/main/src/main/java/com/springboot/blog/config/SecurityConfig.java
@@ -35,7 +38,7 @@ public class VeiculoController {
     }
 
     @PutMapping("/alterar/{id}")
-    public ResponseEntity<@NotNull VeiculoResponseDTO> modificarVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO novosDados){
+    public ResponseEntity<@NotNull VeiculoResponseDTO> modificarVeiculo(@PathVariable Long id, @RequestBody VeiculoDTO novosDados) throws AccessDeniedException {
         VeiculoResponseDTO veiculoAlterado;
         veiculoAlterado = service.alterarInformacao(id, novosDados);
         return ResponseEntity.ok().body(veiculoAlterado);
@@ -49,21 +52,20 @@ public class VeiculoController {
 */
 
     @DeleteMapping("/deletar/{id}")
-    public ResponseEntity deletarVeiculo(@PathVariable Long id){
+    public ResponseEntity deletarVeiculo(@PathVariable Long id) throws AccessDeniedException {
         service.excluirVeiculo(id);
         return ResponseEntity.noContent().build();
     }
 
     //Traz todos os veículos do usuario
-    //Para que o SpringBoot saiba que estamos a pegar o ‘id’ da URL precisamos deixar o mesmo nome do id no parâmetro para que ele não confunda
-    @GetMapping("/usuario/{id}")
-    public ResponseEntity<List<VeiculoResponseDTO>> printVeiculo(@PathVariable Long id) {
-        List<VeiculoResponseDTO> veiculosUsuario = service.listarPorUsuario(id);
-
+    @GetMapping("/listar")
+    public ResponseEntity<List<VeiculoResponseDTO>> ListarVeiculoUsuario() {
+        List<VeiculoResponseDTO> veiculosUsuario = service.listarPorUsuario();
 
         return ResponseEntity.ok(veiculosUsuario);
     }
 
+    //Para que o SpringBoot saiba que estamos a pegar o ‘id’ da URL precisamos deixar o mesmo nome do id no parâmetro para que ele não confunda
     @GetMapping("/saude/{id}")
     public ResponseEntity<Integer> pegarSaude(@PathVariable Long id){
         Integer saude = service.pegarSaudeVeiculo(id);

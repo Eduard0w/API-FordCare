@@ -10,8 +10,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ public class VeiculoService {
 
     @Autowired
     private VeiculoMapper mapper;
+
+    @Autowired
+    private VeiculoSeguranca seguranca;
 
     public Veiculo cadastrarVeiculo(@NotNull VeiculoDTO dados) {
         //Busca o dono do carro
@@ -60,7 +65,7 @@ public class VeiculoService {
         return veiculoRepository.save(veiculo);
     }
 
-    public VeiculoResponseDTO alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados){
+    public VeiculoResponseDTO alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados) throws AccessDeniedException {
         Veiculo veiculo = veiculoRepository.findById(veiculoId)
                 .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado!"));
 
@@ -81,6 +86,10 @@ public class VeiculoService {
 //        veiculo.setImagemVeiculo(novosDados.getImageVeiculo());
 
 //        Usamos isso:
+
+        if(seguranca.validarUsuario(veiculo)){
+            throw new AccessDeniedException("Você não tem permição para procurar esse veiculo");
+        }
         mapper.atualizarVeiculo(novosDados, veiculo);
 
         calcularSaude(veiculo);
@@ -89,13 +98,18 @@ public class VeiculoService {
         return mapper.veiculoParaVeiculoResponseDTO(veiculo);
     }
 
-    public void excluirVeiculo(Long veiculoId){
+    public void excluirVeiculo(Long veiculoId) throws AccessDeniedException {
+        Optional<Veiculo> veiculoDeletar = veiculoRepository.findById(veiculoId);
+        if(seguranca.validarUsuario(veiculoDeletar.get())){
+            throw new AccessDeniedException("Você não tem permição para deletar esse veiculo");
+        }
         veiculoRepository.deleteById(veiculoId);
     }
 
     // Mé7odo para listar veículos de um usuário específico
-    public List<VeiculoResponseDTO> listarPorUsuario(Long usuarioId) {
-        return veiculoRepository.findByUsuarioId(usuarioId);
+    public List<VeiculoResponseDTO> listarPorUsuario() {
+        Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return veiculoRepository.findByUsuarioId(usuarioLogado.getId());
     }
 
     public void calcularSaude(@NotNull Veiculo v){
@@ -103,15 +117,12 @@ public class VeiculoService {
         Integer saude = 100;
         LocalDate dataAtual = LocalDate.now();
 
-        // 1. Cálculo de Manutenção (Usa Math.max para pegar o pior cenário entre Data e KM)
         int perdaOleo = calcularPerdaManutencao(v.getUltTrocaOleo(), v.getKm(), dataAtual);
         int perdaFiltro = calcularPerdaManutencao(v.getUltTrocaFiltro(), v.getKm(), dataAtual);
         int perdaPastilhas = calcularPerdaManutencao(v.getUltTrocaPastilhas(), v.getKm(), dataAtual);
 
-        // 2. Cálculo de Alertas (Ponderado pela gravidade)
         int perdaAlertas = calcularPerdaPorAlertas(v.getAlertaPainel());
 
-        // 3. Aplicação das penalidades
         int totalPerda = perdaOleo + perdaFiltro + perdaPastilhas + perdaAlertas;
         saude -= totalPerda;
 
@@ -125,7 +136,6 @@ public class VeiculoService {
         Veiculo veiculo = veiculoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado"));
 
-        // Retorna a saúde calculada (ou 0 se for nula)
         return veiculo.getSaudeVeiculo() != null ? veiculo.getSaudeVeiculo() : 0;
     }
 
