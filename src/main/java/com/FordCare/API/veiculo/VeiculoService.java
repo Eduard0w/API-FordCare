@@ -10,10 +10,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -34,11 +33,11 @@ public class VeiculoService {
     private VeiculoMapper mapper;
 
     @Autowired
-    private VeiculoSeguranca seguranca;
+    private VeiculoInfra seguranca;
 
     public Veiculo cadastrarVeiculo(@NotNull VeiculoDTO dados) {
         //Busca o dono do carro através do Token
-        Usuario dono = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Usuario dono = seguranca.getUsuarioLogado();
 
         //Cria o Veiculo e associa os dados
         Veiculo veiculo = new Veiculo();
@@ -64,7 +63,7 @@ public class VeiculoService {
         return veiculoRepository.save(veiculo);
     }
 
-    public VeiculoResponseDTO alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados) throws AccessDeniedException {
+    public VeiculoResponseDTO alterarInformacao(@NotNull Long veiculoId, @NotNull VeiculoDTO novosDados) throws AccessDeniedException, java.nio.file.AccessDeniedException {
         Veiculo veiculo = veiculoRepository.findById(veiculoId)
                 .orElseThrow(() -> new EntityNotFoundException("Veículo não encontrado!"));
 
@@ -97,7 +96,7 @@ public class VeiculoService {
         return mapper.veiculoParaVeiculoResponseDTO(veiculo);
     }
 
-    public void excluirVeiculo(Long veiculoId) throws AccessDeniedException {
+    public void excluirVeiculo(Long veiculoId) throws AccessDeniedException, java.nio.file.AccessDeniedException {
         Optional<Veiculo> veiculoDeletar = veiculoRepository.findById(veiculoId);
         if(!seguranca.validarUsuario(veiculoDeletar.get())){
             throw new AccessDeniedException("Você não tem permição para deletar esse veiculo");
@@ -105,10 +104,11 @@ public class VeiculoService {
         veiculoRepository.deleteById(veiculoId);
     }
 
-    // Mé7odo para listar veículos de um usuário específico
+    // Método para listar veículos de um usuário específico
     public List<VeiculoResponseDTO> listarPorUsuario() {
-        Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return veiculoRepository.findByUsuarioId(usuarioLogado.getId());
+        Usuario usuarioLogado = seguranca.getUsuarioLogado();
+        List<Veiculo> veiculos = veiculoRepository.findByUsuarioId(usuarioLogado.getId());
+        return mapper.responsList(veiculos);
     }
 
     public void calcularSaude(@NotNull Veiculo v){

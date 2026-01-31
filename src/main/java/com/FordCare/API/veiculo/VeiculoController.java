@@ -1,15 +1,10 @@
 package com.FordCare.API.veiculo;
 
-import com.FordCare.API.usuario.Usuario;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoDTO;
 import com.FordCare.API.veiculo.veiculoDto.VeiculoResponseDTO;
-import lombok.Data;
-import org.apache.catalina.Service;
-import org.apache.coyote.Response;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,7 +12,6 @@ import java.net.URI;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-// API de exemplo: https://github.com/RameshMF/springboot-blog-rest-api/blob/main/src/main/java/com/springboot/blog/config/SecurityConfig.java
 
 @RestController
 @RequestMapping("/veiculo")
@@ -26,8 +20,6 @@ public class VeiculoController {
     @Autowired
     private VeiculoService service;
 
-
-    // https://medium.com/@michel.marciano1984/spring-boot-na-pr%C3%A1tica-parte-2-eac9bdcab17a
     @PostMapping("/criar")
     public ResponseEntity<Veiculo> criarVeiculo(@RequestBody VeiculoDTO v, @NotNull UriComponentsBuilder uriBuilder) {
         Veiculo novoVeiculo = service.cadastrarVeiculo(v);
@@ -44,14 +36,7 @@ public class VeiculoController {
         return ResponseEntity.ok().body(veiculoAlterado);
     }
 
-/*
-    @DeleteMapping("/deletar/{id}")
-    public void deletarVeiculo(@PathVariable Long id){
-        service.excluirVeiculo(id);
-    }
-*/
-
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity deletarVeiculo(@PathVariable Long id) throws AccessDeniedException {
         service.excluirVeiculo(id);
         return ResponseEntity.noContent().build();

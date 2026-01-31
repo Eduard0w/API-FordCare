@@ -9,6 +9,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 /* Foi utilizado a biblioteca MapStruct, ela automatiza a criação, nesse exemplo,
 de if/else que seriam necessários para troca das informações */
 // componentModel = "spring" permite usar @Autowired no Service
@@ -21,4 +23,6 @@ public interface VeiculoMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VeiculoResponseDTO veiculoParaVeiculoResponseDTO(Veiculo veiculo);
+
+    List<VeiculoResponseDTO> responsList(List<Veiculo> veiculo);
 }

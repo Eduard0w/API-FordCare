@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.nio.file.AccessDeniedException;
 
 @Component
-public class VeiculoSeguranca {
+public class VeiculoInfra {
 
     boolean validarUsuario(Veiculo veiculo) throws AccessDeniedException {
         Usuario usuarioDono = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -15,5 +15,9 @@ public class VeiculoSeguranca {
             return false;
         }
         return true;
+    }
+
+    public Usuario getUsuarioLogado(){
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
