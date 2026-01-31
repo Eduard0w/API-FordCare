@@ -37,9 +37,8 @@ public class VeiculoService {
     private VeiculoSeguranca seguranca;
 
     public Veiculo cadastrarVeiculo(@NotNull VeiculoDTO dados) {
-        //Busca o dono do carro
-        Usuario dono = usuarioRepository.findById(dados.getUsuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        //Busca o dono do carro através do Token
+        Usuario dono = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         //Cria o Veiculo e associa os dados
         Veiculo veiculo = new Veiculo();
@@ -87,7 +86,7 @@ public class VeiculoService {
 
 //        Usamos isso:
 
-        if(seguranca.validarUsuario(veiculo)){
+        if(!seguranca.validarUsuario(veiculo)){
             throw new AccessDeniedException("Você não tem permição para procurar esse veiculo");
         }
         mapper.atualizarVeiculo(novosDados, veiculo);
@@ -100,7 +99,7 @@ public class VeiculoService {
 
     public void excluirVeiculo(Long veiculoId) throws AccessDeniedException {
         Optional<Veiculo> veiculoDeletar = veiculoRepository.findById(veiculoId);
-        if(seguranca.validarUsuario(veiculoDeletar.get())){
+        if(!seguranca.validarUsuario(veiculoDeletar.get())){
             throw new AccessDeniedException("Você não tem permição para deletar esse veiculo");
         }
         veiculoRepository.deleteById(veiculoId);
