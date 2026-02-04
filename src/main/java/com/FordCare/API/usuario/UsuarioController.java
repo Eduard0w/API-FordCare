@@ -68,4 +68,10 @@ public class UsuarioController {
         //retorna 201 se for crido com sucesso
         return ResponseEntity.created(uri).body(new UsuarioResponseDTO(novoUsuario.getId(), novoUsuario.getNome()));
     }
+
+    @DeleteMapping("/deletar")
+    public ResponseEntity deletarUsuario(){
+        service.deletarUsuario();
+        return ResponseEntity.ok().build();
+    }
 }

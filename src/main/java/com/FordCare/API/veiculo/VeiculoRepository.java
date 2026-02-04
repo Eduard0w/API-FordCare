@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface VeiculoRepository extends JpaRepository<Veiculo, Long> {
     List<Veiculo> findByUsuarioId(Long usuarioId);
+    void deleteByUsuarioId(Long usuarioId);
+    boolean existsByUsuarioId(Long usuarioId);
 }
