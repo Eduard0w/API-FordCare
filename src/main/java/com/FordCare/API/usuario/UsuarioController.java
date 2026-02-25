@@ -45,10 +45,10 @@ public class UsuarioController {
 //    }
 
     //Para efetuar login precisaria de alguma autorização? Ou deve ser permitido por qualquer um?
-    // Acho que deve ser permitido para qualquer um a principio.
+    // Acho que deve ser permitido para qualquer um a princípio.
     @PostMapping("/login")
     public ResponseEntity efetuarLogin(@RequestBody @Valid @NotNull LoginDTO login){
-        var userNamePassword = new UsernamePasswordAuthenticationToken(login.getEmail(), login.getSenha());
+        var userNamePassword = new UsernamePasswordAuthenticationToken(login.getEmail().toLowerCase(), login.getSenha());
         var auth = authenticationManager.authenticate(userNamePassword);
 
         var token = tokenService.geradorToken((Usuario) auth.getPrincipal());
