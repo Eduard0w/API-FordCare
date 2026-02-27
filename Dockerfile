@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 # Comando que prepara a primeira parte (nesse caso, compacta a aplicação java usando a ferramenta maven. Criando uma pasta target, onde o executavel se encontra)
-RUN ./mvnw clean package -DskipTest
+RUN ./mvnw clean package -DskipTests
 
 # Inicia uma nova imagem limpa (runtime), descartando o código fonte e ferramentas de build (Maven) da etapa anterior.
 FROM eclipse-temurin:21
